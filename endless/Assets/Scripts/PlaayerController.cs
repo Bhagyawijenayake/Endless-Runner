@@ -10,6 +10,11 @@ public class PlaayerController : MonoBehaviour
     public bool isOnGround= true;
     public bool gameOver;
     private Animator playerAnim;
+    public ParticleSystem explosionParticle;
+    public ParticleSystem dirtparticle;
+    public AudioClip jumpSound;
+    public AudioClip crashSound;
+    private AudioSource playerAudio;
     
 
 
@@ -19,7 +24,7 @@ public class PlaayerController : MonoBehaviour
         playaerRB = GetComponent<Rigidbody>();
         Physics.gravity *= gravityModifier;
         playerAnim = GetComponent<Animator>();
-        
+        playerAudio = GetComponent<AudioSource>();
 
     }
 
@@ -31,6 +36,8 @@ public class PlaayerController : MonoBehaviour
             playaerRB.AddForce(Vector3.up * jumpForce,ForceMode.Impulse);
             isOnGround = false;
             playerAnim.SetTrigger("Jump_trig");
+            dirtparticle.Stop();
+            playerAudio.PlayOneShot(jumpSound,1.0f);
             
         }
         
@@ -41,6 +48,7 @@ public class PlaayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             isOnGround = true;
+            dirtparticle.Play();
         }
         else if (collision.gameObject.CompareTag("Obstracle"))
         {
@@ -48,6 +56,9 @@ public class PlaayerController : MonoBehaviour
             Debug.Log("Gmae over");
             playerAnim.SetBool("Death_b",true);
             playerAnim.SetInteger("DeathType_int", 1);
+            explosionParticle.Play();
+            dirtparticle.Stop();
+            playerAudio.PlayOneShot(crashSound,1.0f);
         }
 
        
